@@ -17,7 +17,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       </div>
     );
   }
-
+  console.log("User in ProtectedRoute:", user);
+  
   if (!user) {
     return <Navigate to="/login" replace />;
   }

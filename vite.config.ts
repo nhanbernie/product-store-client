@@ -8,12 +8,16 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
-  plugins: [
-    react()
-  ],
+  plugins: [react()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  define: {
+    "process.env": {
+      NODE_ENV: process.env.NODE_ENV,
+      VITE_API_BASE_URL: process.env.VITE_API_BASE_URL,
     },
   },
 }));

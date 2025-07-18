@@ -1,26 +1,25 @@
-
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { Eye, EyeOff, LogIn, ArrowLeft } from "lucide-react";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const { login, isLoading } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     const success = await login(email, password);
     if (success) {
-      navigate('/admin');
+      navigate("/admin");
     } else {
-      setError('Email hoặc mật khẩu không đúng');
+      setError("Email hoặc mật khẩu không đúng");
     }
   };
 
@@ -28,16 +27,29 @@ const LoginPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 flex items-center justify-center px-4">
       <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
         <div className="text-center mb-8">
+          <Link
+            to="/"
+            className="inline-flex items-center text-emerald-600 hover:text-emerald-700 mb-4 transition-colors"
+          >
+            <ArrowLeft size={20} className="mr-2" />
+            Về trang chủ
+          </Link>
           <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center mx-auto mb-4">
             <LogIn className="text-white" size={24} />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Đăng nhập Admin</h1>
-          <p className="text-gray-600">Đăng nhập để quản lý Fashion Collection</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Đăng nhập</h1>
+          <p className="text-gray-600">
+            Đăng nhập để truy cập Fashion Collection
+          </p>
         </div>
 
         <div className="mb-6 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
-          <h3 className="font-semibold text-emerald-800 mb-2">Thông tin đăng nhập demo:</h3>
-          <p className="text-sm text-emerald-700">Email: admin@fashioncollection.com</p>
+          <h3 className="font-semibold text-emerald-800 mb-2">
+            Thông tin đăng nhập demo:
+          </h3>
+          <p className="text-sm text-emerald-700">
+            Email: admin@fashioncollection.com
+          </p>
           <p className="text-sm text-emerald-700">Mật khẩu: admin123</p>
         </div>
 
@@ -49,7 +61,10 @@ const LoginPage = () => {
           )}
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Email
             </label>
             <input
@@ -64,12 +79,15 @@ const LoginPage = () => {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Mật khẩu
             </label>
             <div className="relative">
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 id="password"
                 required
                 value={password}
@@ -87,6 +105,16 @@ const LoginPage = () => {
             </div>
           </div>
 
+          {/* Forgot Password Link */}
+          <div className="text-right">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
+            >
+              Quên mật khẩu?
+            </Link>
+          </div>
+
           <button
             type="submit"
             disabled={isLoading}
@@ -102,6 +130,19 @@ const LoginPage = () => {
             )}
           </button>
         </form>
+
+        {/* Register Link */}
+        <div className="mt-6 text-center">
+          <p className="text-gray-600">
+            Chưa có tài khoản?{" "}
+            <Link
+              to="/register"
+              className="text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
+            >
+              Đăng ký ngay
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

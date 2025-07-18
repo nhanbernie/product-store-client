@@ -25,14 +25,7 @@ export interface AuthData {
   refreshToken: string;
 }
 
-export interface LoginResponse {
-  statusCode: number;
-  data: AuthData[];
-  message: string;
-  timestamp: string;
-}
-
-export interface RegisterResponse {
+export interface ApiAuthResponse {
   statusCode: number;
   data: AuthData[];
   message: string;
@@ -86,7 +79,7 @@ export interface ResetPasswordResponse {
 class AuthService {
   async login(credentials: LoginRequest): Promise<AuthData> {
     try {
-      const response = await apiClient.request<LoginResponse>("/auth/login", {
+      const response = await apiClient.request<ApiAuthResponse>("/auth/login", {
         method: "POST",
         body: JSON.stringify(credentials),
       });
@@ -108,7 +101,7 @@ class AuthService {
 
   async register(userData: RegisterRequest): Promise<AuthData> {
     try {
-      const response = await apiClient.request<RegisterResponse>(
+      const response = await apiClient.request<ApiAuthResponse>(
         "/auth/register",
         {
           method: "POST",

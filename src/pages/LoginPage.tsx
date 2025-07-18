@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Eye, EyeOff, LogIn, ArrowLeft } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const { login, isLoading } = useAuth();
+  const { login, isLoading, isAdmin, user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,7 +19,20 @@ const LoginPage = () => {
 
     const success = await login(email, password);
     if (success) {
-      navigate("/admin");
+      // Show welcome message
+      toast({
+        title: "Đăng nhập thành công",
+        description: `Chào mừng ${email}!`,
+      });
+
+      // Redirect based on user role
+      if (isAdmin()) {
+        // Admin goes directly to admin panel
+        navigate("/admin");
+      } else {
+        // Regular users go to homepage
+        navigate("/");
+      }
     } else {
       setError("Email hoặc mật khẩu không đúng");
     }
@@ -48,9 +63,9 @@ const LoginPage = () => {
             Thông tin đăng nhập demo:
           </h3>
           <p className="text-sm text-emerald-700">
-            Email: admin@fashioncollection.com
+            Email: ttnhanbernie@gmail.com
           </p>
-          <p className="text-sm text-emerald-700">Mật khẩu: admin123</p>
+          <p className="text-sm text-emerald-700">Mật khẩu: Bernie123</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -74,7 +89,7 @@ const LoginPage = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-              placeholder="admin@fashioncollection.com"
+              placeholder="ttnhanbernie@gmail.com"
             />
           </div>
 
@@ -93,7 +108,7 @@ const LoginPage = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                placeholder="admin123"
+                placeholder="Bernie123"
               />
               <button
                 type="button"

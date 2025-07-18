@@ -7,22 +7,10 @@ interface AuthContextType {
   register: (email: string, password: string, name: string) => Promise<boolean>;
   logout: () => Promise<void>;
   isLoading: boolean;
+  isAdmin: () => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// Fallback mock admin data for development
-const mockAdmin: User = {
-  id: "1",
-  email: "admin@fashioncollection.com",
-  name: "Admin User",
-  role: "admin",
-};
-
-const mockCredentials = {
-  email: "admin@fashioncollection.com",
-  password: "admin123",
-};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -62,28 +50,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsLoading(true);
 
     try {
-      // Try real API login first
       const authData = await authService.login({ email, password });
       setUser(authData.user);
       localStorage.setItem("user", JSON.stringify(authData.user));
       setIsLoading(false);
       return true;
     } catch (error) {
-      console.error("API login failed, trying mock login:", error);
-
-      // Fallback to mock login for development
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      if (
-        email === mockCredentials.email &&
-        password === mockCredentials.password
-      ) {
-        setUser(mockAdmin);
-        localStorage.setItem("user", JSON.stringify(mockAdmin));
-        setIsLoading(false);
-        return true;
-      }
-
+      console.error("Login failed:", error);
       setIsLoading(false);
       return false;
     }
@@ -122,8 +95,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const isAdmin = (): boolean => {
+    return user?.role === "admin";
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, isLoading }}>
+    <AuthContext.Provider
+      value={{ user, login, register, logout, isLoading, isAdmin }}
+    >
       {children}
     </AuthContext.Provider>
   );

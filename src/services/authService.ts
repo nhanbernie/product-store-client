@@ -159,22 +159,27 @@ class AuthService {
 
   async logout(): Promise<void> {
     try {
-      // Call logout endpoint with accessToken
+      // Call logout endpoint with accessToken if available
       const accessToken = apiClient.getAccessToken();
       if (accessToken) {
-        console.log("Calling logout API...");
+        console.log("Calling logout API with token...");
         await apiClient.request("/auth/logout", {
           method: "POST",
         });
         console.log("Logout API call successful");
+      } else {
+        console.log("No access token found, performing local logout only");
       }
     } catch (error) {
       console.error("Logout API call failed:", error);
       // Continue with local logout even if API call fails
+      // This handles cases where token is invalid/expired
     } finally {
-      // Clear local tokens and all localStorage data
+      // Always clear local data regardless of API call success/failure
+      console.log("Clearing all local data...");
       apiClient.logout();
       this.clearAllLocalData();
+      console.log("Local logout completed");
     }
   }
 
@@ -190,10 +195,29 @@ class AuthService {
     ];
 
     keysToRemove.forEach((key) => {
-      localStorage.removeItem(key);
+      try {
+        localStorage.removeItem(key);
+        console.log(`Removed ${key} from localStorage`);
+      } catch (error) {
+        console.error(`Failed to remove ${key} from localStorage:`, error);
+      }
     });
 
     console.log("All local data cleared");
+  }
+
+  // Public method to force clear all data (useful for emergency logout)
+  public forceLogout(): void {
+    console.log("Force logout initiated...");
+    try {
+      // Clear API client tokens
+      apiClient.logout();
+      // Clear all local data
+      this.clearAllLocalData();
+      console.log("Force logout completed");
+    } catch (error) {
+      console.error("Error during force logout:", error);
+    }
   }
 
   async getCurrentUser() {

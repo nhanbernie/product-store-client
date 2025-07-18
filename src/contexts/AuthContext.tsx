@@ -29,15 +29,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             setUser(currentUser);
           } catch (error) {
             console.error("Failed to get current user:", error);
-            // Fallback to saved user data
-            const savedUser = localStorage.getItem("user");
-            if (savedUser) {
-              setUser(JSON.parse(savedUser));
+
+            // Check if error is due to invalid/expired token
+            if (
+              error instanceof Error &&
+              (error.message.includes("401") ||
+                error.message.includes("403") ||
+                error.message.includes("token"))
+            ) {
+              console.log("Token appears to be invalid, performing cleanup...");
+              // Force logout to clear corrupted/expired tokens
+              authService.forceLogout();
+              setUser(null);
+            } else {
+              // Fallback to saved user data for other errors
+              try {
+                const savedUser = localStorage.getItem("user");
+                if (savedUser) {
+                  setUser(JSON.parse(savedUser));
+                }
+              } catch (parseError) {
+                console.error("Failed to parse saved user data:", parseError);
+                // Clear corrupted user data
+                localStorage.removeItem("user");
+              }
             }
           }
         }
       } catch (error) {
         console.error("Auth initialization failed:", error);
+        // If initialization completely fails, clear everything
+        authService.forceLogout();
       } finally {
         setIsLoading(false);
       }
@@ -90,8 +112,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log("Logout service completed");
     } catch (error) {
       console.error("Logout failed:", error);
+      // Even if logout service fails, continue with local cleanup
     } finally {
-      // Clear user state
+      // Always clear user state regardless of API call success
+      console.log("Clearing user state...");
       setUser(null);
 
       // Force reload to clear all app state and redirect to home

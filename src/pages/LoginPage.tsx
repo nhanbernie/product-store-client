@@ -30,13 +30,16 @@ const LoginPage = () => {
         description: `Chào mừng ${email}!`,
       });
 
-      // Redirect based on user role
-      if (isAdmin()) {
+      // Redirect based on context
+      if (from === "/checkout" && selectedItems) {
+        // Redirect back to checkout with selected items
+        navigate("/checkout", { state: { selectedItems } });
+      } else if (isAdmin()) {
         // Admin goes directly to admin panel
         navigate("/admin");
       } else {
-        // Regular users go to homepage
-        navigate("/");
+        // Regular users go to homepage or previous page
+        navigate(from || "/");
       }
     } else {
       setError("Email hoặc mật khẩu không đúng");

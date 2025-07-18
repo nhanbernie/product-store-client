@@ -85,12 +85,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = async () => {
     try {
+      console.log("Starting logout process...");
       await authService.logout();
+      console.log("Logout service completed");
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
+      // Clear user state
       setUser(null);
-      localStorage.removeItem("user");
+
+      // Force reload to clear all app state and redirect to home
+      console.log("Redirecting to home page...");
       window.location.href = "/";
     }
   };

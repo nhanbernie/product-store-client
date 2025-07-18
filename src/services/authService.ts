@@ -159,21 +159,41 @@ class AuthService {
 
   async logout(): Promise<void> {
     try {
-      // Optional: Call logout endpoint on server
-      const refreshToken = apiClient.getRefreshToken();
-      if (refreshToken) {
+      // Call logout endpoint with accessToken
+      const accessToken = apiClient.getAccessToken();
+      if (accessToken) {
+        console.log("Calling logout API...");
         await apiClient.request("/auth/logout", {
           method: "POST",
-          body: JSON.stringify({ refreshToken }),
         });
+        console.log("Logout API call successful");
       }
     } catch (error) {
       console.error("Logout API call failed:", error);
       // Continue with local logout even if API call fails
     } finally {
-      // Clear local tokens
+      // Clear local tokens and all localStorage data
       apiClient.logout();
+      this.clearAllLocalData();
     }
+  }
+
+  private clearAllLocalData(): void {
+    // Clear all app-related data from localStorage
+    const keysToRemove = [
+      "user",
+      "accessToken",
+      "refreshToken",
+      "fashionCollection_cart",
+      "fashionCollection_orders",
+      "fashionCollection_preferences",
+    ];
+
+    keysToRemove.forEach((key) => {
+      localStorage.removeItem(key);
+    });
+
+    console.log("All local data cleared");
   }
 
   async getCurrentUser() {

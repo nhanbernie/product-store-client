@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "../contexts/CartContext";
+import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import StaggeredList, {
   StaggeredItem,
@@ -26,6 +27,7 @@ const CartPage = () => {
     getSelectedItems,
   } = useCart();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { toast } = useToast();
 
   const selectedItems = getSelectedItems();
@@ -46,6 +48,22 @@ const CartPage = () => {
         title: "Chưa chọn sản phẩm",
         description: "Vui lòng chọn ít nhất một sản phẩm để thanh toán.",
         variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if user is authenticated
+    if (!user) {
+      toast({
+        title: "Yêu cầu đăng nhập",
+        description: "Vui lòng đăng nhập để tiếp tục thanh toán.",
+        variant: "destructive",
+      });
+      navigate("/login", {
+        state: {
+          from: "/checkout",
+          selectedItems,
+        },
       });
       return;
     }
@@ -189,8 +207,8 @@ const CartPage = () => {
                                   </motion.button>
                                   <motion.span
                                     key={item.quantity}
-                                    initial={{ scale: 1.2, color: '#10b981' }}
-                                    animate={{ scale: 1, color: '#000' }}
+                                    initial={{ scale: 1.2, color: "#10b981" }}
+                                    animate={{ scale: 1, color: "#000" }}
                                     transition={{ duration: 0.2 }}
                                     className="px-3 py-1 text-center min-w-[3rem]"
                                   >
@@ -219,7 +237,9 @@ const CartPage = () => {
 
                             {/* Subtotal */}
                             <div className="mt-2 text-right">
-                              <span className="text-sm text-gray-600">Tổng: </span>
+                              <span className="text-sm text-gray-600">
+                                Tổng:{" "}
+                              </span>
                               <span className="font-medium text-gray-900">
                                 {(
                                   item.product.price * item.quantity

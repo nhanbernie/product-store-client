@@ -24,9 +24,12 @@ import NotFound from "../../pages/NotFound";
 const AnimatedRoutes: React.FC = () => {
   const location = useLocation();
 
+  // Don't show main Navigation on admin routes
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
   return (
     <>
-      <Navigation />
+      {!isAdminRoute && <Navigation />}
       <AnimatePresence mode="wait" initial={false}>
         <Routes location={location} key={location.pathname}>
           <Route

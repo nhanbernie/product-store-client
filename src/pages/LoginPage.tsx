@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Eye, EyeOff, LogIn, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -11,7 +11,12 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const { login, isLoading, isAdmin, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+
+  // Get redirect info from location state
+  const from = location.state?.from;
+  const selectedItems = location.state?.selectedItems;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

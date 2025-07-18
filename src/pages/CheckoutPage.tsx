@@ -47,6 +47,24 @@ const CheckoutPage = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!user) {
+      toast({
+        title: "Yêu cầu đăng nhập",
+        description: "Vui lòng đăng nhập để tiếp tục thanh toán.",
+        variant: "destructive",
+      });
+      navigate("/login", {
+        state: {
+          from: location.pathname,
+          selectedItems,
+        },
+      });
+      return;
+    }
+  }, [user, navigate, toast, location.pathname, selectedItems]);
+
   // Redirect if no items selected
   useEffect(() => {
     if (selectedItems.length === 0) {

@@ -48,7 +48,7 @@ const Hero = () => {
               to="#products"
               variant="primary"
               size="lg"
-              className="shadow-lg hover:shadow-xl"
+              className="shadow-lg hover:shadow-xl cursor-pointer"
             >
               Shop Now
             </AnimatedButton>
@@ -59,7 +59,7 @@ const Hero = () => {
                 to="/admin"
                 variant="secondary"
                 size="lg"
-                className="border-2 border-emerald-600"
+                className="border-2 border-emerald-600 cursor-pointer"
               >
                 Admin Panel
               </AnimatedButton>

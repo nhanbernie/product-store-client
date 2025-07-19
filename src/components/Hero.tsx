@@ -8,9 +8,11 @@ import {
   staggerItem,
   getReducedMotionVariants,
 } from "../utils/animations";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
   const { isAdmin } = useAuth();
+  const navigate = useNavigate();
   const containerVariants = getReducedMotionVariants(staggerContainer);
   const itemVariants = getReducedMotionVariants(staggerItem);
 
@@ -52,6 +54,7 @@ const Hero = () => {
             </AnimatedButton>
             {isAdmin() && (
               <AnimatedButton
+                onClick={() => navigate("/admin")}
                 as={Link}
                 to="/admin"
                 variant="secondary"

@@ -22,6 +22,7 @@ import {
   getReducedMotionVariants,
 } from "../utils/animations";
 import { orderService } from "../services/orderService";
+import { parseApiError } from "../utils/errorUtils";
 
 const CheckoutPage = () => {
   const location = useLocation();
@@ -195,12 +196,13 @@ const CheckoutPage = () => {
       });
     } catch (error) {
       console.error("Order creation failed:", error);
+
+      // Parse API error response using utility
+      const errorMessage = parseApiError(error);
+
       toast({
         title: "Đặt hàng thất bại",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Có lỗi xảy ra. Vui lòng thử lại.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

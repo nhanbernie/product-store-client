@@ -159,11 +159,18 @@ class ApiClient {
 
           if (!retryResponse.ok) {
             const errorText = await retryResponse.text();
-            throw new Error(
-              `HTTP ${retryResponse.status}: ${
-                errorText || retryResponse.statusText
-              }`
-            );
+
+            // Try to parse JSON error response
+            try {
+              const errorData = JSON.parse(errorText);
+              throw new Error(JSON.stringify(errorData));
+            } catch (parseError) {
+              throw new Error(
+                `HTTP ${retryResponse.status}: ${
+                  errorText || retryResponse.statusText
+                }`
+              );
+            }
           }
 
           const data = await retryResponse.json();
@@ -180,9 +187,18 @@ class ApiClient {
       if (!response.ok) {
         const errorText = await response.text();
         console.error(`API Error: ${response.status} - ${errorText}`);
-        throw new Error(
-          `HTTP ${response.status}: ${errorText || response.statusText}`
-        );
+
+        // Try to parse JSON error response
+        try {
+          const errorData = JSON.parse(errorText);
+          // Throw the parsed JSON so it can be handled properly
+          throw new Error(JSON.stringify(errorData));
+        } catch (parseError) {
+          // If not JSON, throw original format
+          throw new Error(
+            `HTTP ${response.status}: ${errorText || response.statusText}`
+          );
+        }
       }
 
       const data = await response.json();
